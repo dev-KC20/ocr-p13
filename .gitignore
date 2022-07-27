@@ -2,6 +2,7 @@
 local/
 flake8_report/
 *-*_wait
+app/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

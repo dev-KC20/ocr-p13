@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  app:
+  # build the current Dockerfile
+    build: .
+    # share the current folder
+    volumes:
+      - .:/oc_lettings/
+    ports:
+      - 8000:8000
+    image: app:oclet_server
+    container_name: oclet_container
+    env_file:
+      - ./.env.dev
+    # run and expose the container
+    command: python manage.py runserver 0.0.0.0:8000
