@@ -1,7 +1,7 @@
 # pull official base image
-FROM python:3-slim
+FROM python:3
 
-# set environment variables
+# set environment variables no buffering stdout/stderr
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 

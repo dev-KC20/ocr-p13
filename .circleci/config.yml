@@ -1,0 +1,40 @@
+version: 2.1
+jobs:
+  lint_and_test:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          name: package install
+          command: |
+            pip install --user --no-cache-dir -r requirements.txt
+          when: always
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - "ENV"
+      - run:
+          name: linting check
+          command: |
+            flake8 --ignore=F841
+      - run:
+          name: tests run
+          command: |
+            pytest
+      - store_artifacts:
+          path: test-reports/
+          destination: python_app
+
+workflows:
+  test_build_deploy:
+    jobs:
+      - lint_and_test
+      # - build_push_docker_image:
+      #     requires:
+      #       - build_test
+      #     filters:
+      #       branches:
+      #         only: master
