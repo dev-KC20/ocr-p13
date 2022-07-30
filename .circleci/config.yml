@@ -19,7 +19,7 @@ jobs:
       - run:
           name: linting check
           command: |
-            flake8 --ignore=F841
+            flake8 
       - run:
           name: tests run
           command: |
