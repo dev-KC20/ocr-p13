@@ -4,7 +4,9 @@ jobs:
     docker:
       - image: cimg/python:3.10
     steps:
+      # get the src from GH
       - checkout
+      # saved during last run ; checksum in case of dep changes
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run:
