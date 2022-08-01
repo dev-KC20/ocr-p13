@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  heroku: circleci/heroku@0.0.10
 jobs:
   lint_and_test:
     docker:
@@ -34,6 +36,9 @@ workflows:
   test_build_deploy:
     jobs:
       - lint_and_test
+  heroku_deploy:
+    jobs:
+      - heroku/deploy-via-git
       # - build_push_docker_image:
       #     requires:
       #       - build_test
