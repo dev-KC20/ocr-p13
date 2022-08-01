@@ -1,1 +1,1 @@
-web: gunicorn oc_lettings_site.apps.OCLettingsSiteConfig.wsgi --log-file -
+web: gunicorn oc_lettings_site.wsgi --log-file -
