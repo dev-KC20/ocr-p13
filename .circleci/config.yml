@@ -49,10 +49,9 @@ jobs:
       - run: 
           name: publish to dockerhub
           command: |
-          TAG=$CIRCLE_SHA1
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-          docker build -t $DOCKER_USERNAME/oc_lettings:$TAG .
-          docker push $DOCKER_USERNAME/oc_lettings:$TAG
+          docker build -t $DOCKER_USERNAME/oc_lettings:$CIRCLE_SHA1 .
+          docker push $DOCKER_USERNAME/oc_lettings:$CIRCLE_SHA1
   deploy_docker_to_heroku:
     executor: heroku/default
     steps:
@@ -69,7 +68,6 @@ jobs:
       - run:
           name: push to heroku registry
           command: |
-          TAG=$CIRCLE_SHA1
           # docker tag $DOCKER_USERNAME/oc-lettings:latest registry.heroku.com/$HEROKU_APP_NAME/web
           heroku/push-docker-image $DOCKER_USERNAME/oc-lettings:latest
           docker push registry.heroku.com/$HEROKU_APP_NAME/web
