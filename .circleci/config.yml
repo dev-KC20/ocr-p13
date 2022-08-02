@@ -49,9 +49,9 @@ jobs:
       - run: 
           name: publish to dockerhub
           command: |
-          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-          docker build -t $DOCKER_USERNAME/oc_lettings:$CIRCLE_SHA1 .
-          docker push $DOCKER_USERNAME/oc_lettings:$CIRCLE_SHA1
+          echo ${DOCKER_PASSWORD] | docker login -u ${DOCKER_USERNAME} --password-stdin
+          docker build -t ${DOCKER_USERNAME}/oc_lettings:$CIRCLE_SHA1 .
+          docker push ${DOCKER_USERNAME}/oc_lettings:$CIRCLE_SHA1
   deploy_docker_to_heroku:
     executor: heroku/default
     steps:
@@ -60,17 +60,17 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true
       - docker/check:
-          docker-username: $DOCKER_USERNAME
-          docker-password: $DOCKER_PASSWORD
+          docker-username: ${DOCKER_USERNAME}
+          docker-password: ${DOCKER_PASSWORD}
       - checkout
       - heroku/install
       - run: heroku container:login
       - run:
           name: push to heroku registry
           command: |
-          # docker tag $DOCKER_USERNAME/oc-lettings:latest registry.heroku.com/$HEROKU_APP_NAME/web
-          heroku/push-docker-image $DOCKER_USERNAME/oc-lettings:latest
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          # docker tag ${DOCKER_USERNAME}/oc-lettings:latest registry.heroku.com/${HEROKU_APP_NAME}/web
+          heroku/push-docker-image ${DOCKER_USERNAME}/oc-lettings:latest
+          docker push registry.heroku.com/${HEROKU_APP_NAME}/web
   
 
 workflows:
