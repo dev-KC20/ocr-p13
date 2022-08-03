@@ -5,7 +5,7 @@
 version: 2.1
 orbs:
   heroku: circleci/heroku@0.0.10
-  docker: circleci/docker@1.5.0
+  docker: circleci/docker@2.1.2
 
 
 jobs:
@@ -49,12 +49,25 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true
       # build from the attached Dockerfile then push image to Docker Hub
-      - run: 
-          name: publish to dockerhub
-          command: |
-            docker build -t ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1} -f .circleci\images\primary\Dockerfile
-            echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
-            docker push ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1}
+      - docker/check:
+          docker-password: DOCKER_PASSWORD 
+          docker-username: DOCKER_USERNAME 
+      - docker/build:
+          dockerfile: Dockerfile 
+          image: ${DOCKER_USERNAME}/oc_lettings 
+          lint-dockerfile: true 
+          path: .circleci\images\primary\
+
+      - docker/push:
+          image: ${DOCKER_USERNAME}/oc_lettings 
+          tag: ${CIRCLE_SHA1} 
+      #- run: 
+      #    name: publish to dockerhub
+      #    command: |
+      #      docker build -t ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1} -f .circleci\images\primary\Dockerfile
+      #      echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
+      #      docker push ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1}
+
 
   deploy_docker_to_heroku:
     executor: heroku/default
