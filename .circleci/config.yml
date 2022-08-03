@@ -75,7 +75,7 @@ workflows:
       
   push_image_to_docker:
     jobs:
-      - build_and_push_docker_image:
+      - build_and_push_docker_image
           # requires:
           #   - build_and_test
       #     filters:
@@ -83,7 +83,7 @@ workflows:
       #         only: main
   deploy_to_heroku:
     jobs:
-      - deploy_docker_to_heroku:
+      - deploy_docker_to_heroku
           # requires:
           #   - push_image_to_docker
       #     filters:
