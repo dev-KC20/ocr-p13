@@ -57,7 +57,7 @@ jobs:
       - docker/build:
           dockerfile: Dockerfile 
           image: ${DOCKER_USERNAME}/oc_lettings 
-          path: .circleci\images\primary\
+          # path: .circleci\images\primary\
 
       - docker/push:
           image: ${DOCKER_USERNAME}/oc_lettings 
