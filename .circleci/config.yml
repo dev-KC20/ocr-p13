@@ -79,17 +79,15 @@ jobs:
       - heroku/release-docker-image
 
 workflows:
-  build_and_test:
+  build_and_deploy:
     jobs:
       - build_lint_and_test
       - build_and_push_docker_image:
         requires:
           - build_lint_and_test
-      #     filters:
-      #       branches:
-      #         only: main
       - deploy_docker_to_heroku:
         requires:
+          - build_lint_and_test
           - build_and_push_docker_image
       #     filters:
       #       branches:
