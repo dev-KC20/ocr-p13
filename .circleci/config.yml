@@ -5,6 +5,7 @@
 version: 2.1
 orbs:
   heroku: circleci/heroku@0.0.10
+  docker: circleci/docker@1.5.0
 
 
 jobs:
@@ -51,7 +52,7 @@ jobs:
       - run: 
           name: publish to dockerhub
           command: |
-            docker build -t ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1} .
+            docker build -t ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1} -f .circleci\images\primary\Dockerfile
             echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
             docker push ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1}
 
