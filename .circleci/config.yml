@@ -73,13 +73,13 @@ workflows:
   build_and_deploy:
     jobs:
       - lint_and_test
-      - build_and_push_docker_image:
-        requires:
-          - lint_and_test
-      - deploy_docker_to_heroku:
-        requires:
-          - lint_and_test
-          - build_and_push_docker_image
+      - build_and_push_docker_image
+      #  requires:
+      #    - lint_and_test
+      - deploy_docker_to_heroku
+      #  requires:
+      #    - lint_and_test
+      #    - build_and_push_docker_image
       #     filters:
       #       branches:
       #         only: main
