@@ -56,12 +56,11 @@ jobs:
           docker-username: DOCKER_USERNAME 
       - docker/build:
           dockerfile: Dockerfile 
-          image: "${DOCKER_USERNAME}/oc_lettings"
+          image: "${DOCKER_USERNAME}_lettings"
           # path: .circleci\images\primary\
-
       - docker/push:
-          image: "${DOCKER_USERNAME}/oc_lettings" 
-          tag: ${CIRCLE_SHA1} 
+          image: "${DOCKER_USERNAME}_lettings" 
+          # tag: ${CIRCLE_SHA1} 
 
   deploy_docker_to_heroku:
     executor: heroku/default
