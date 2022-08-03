@@ -3,15 +3,16 @@
 # if ok then push it to dockerhub
 # if ok then deploy it to heroku
 version: 2.1
-orbs:
-  heroku: circleci/heroku@0.0.10
-  docker: circleci/docker@2.1.2
 
+orbs:
+  heroku: circleci/heroku@1.2.6
+  docker: circleci/docker@2.1.2
 
 jobs:
   build_lint_and_test:
     docker:
       - image: cimg/python:3.10
+    resource_class: small
     steps:
       # get the src from GH
       - checkout
@@ -42,6 +43,7 @@ jobs:
   build_and_push_docker_image:
     docker:
       - image: cimg/python:3.10
+    resource_class: small
     steps:
       # get the Dockerfile src from GH .circleci\images\primary\Dockerfile
       - checkout
@@ -55,32 +57,29 @@ jobs:
       - docker/build:
           dockerfile: Dockerfile 
           image: ${DOCKER_USERNAME}/oc_lettings 
-          lint-dockerfile: true 
           path: .circleci\images\primary\
 
       - docker/push:
           image: ${DOCKER_USERNAME}/oc_lettings 
           tag: ${CIRCLE_SHA1} 
-      #- run: 
-      #    name: publish to dockerhub
-      #    command: |
-      #      docker build -t ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1} -f .circleci\images\primary\Dockerfile
-      #      echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
-      #      docker push ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1}
-
 
   deploy_docker_to_heroku:
     executor: heroku/default
     steps:
       - heroku/install
-      - run:
-          name: pull from dockerhub and push to heroku
-          command: |
-            docker pull ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1}
-            docker tag ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1} /oc-lettings/web
-            heroku container:login
-            heroku container:push --app=/oc-lettings/web web
-            heroku container:release -a /oc-lettings/web web
+      - heroku/check-authentication:
+          print-whoami: true
+      - heroku/push-docker-image:
+          process-types: web 
+      - heroku/release-docker-image
+     # - run:
+     #     name: pull from dockerhub and push to heroku
+     #     command: |
+     #       docker pull ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1}
+     #       docker tag ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1} /oc-lettings/web
+     #       heroku container:login
+     #       heroku container:push --app=/oc-lettings/web web
+     #       heroku container:release -a /oc-lettings/web web
 
 workflows:
   build_and_test:
