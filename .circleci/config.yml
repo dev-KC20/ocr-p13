@@ -56,15 +56,17 @@ jobs:
             docker push ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1}
 
   deploy_docker_to_heroku:
-    # orbs used
+    executor: heroku/default
     steps:
-      # install heroku CLI
       - heroku/install
-      - run: heroku container:login
-      - heroku/push-docker-image ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1}
-          # process-types: web
-      - heroku/release-docker-image:
-          process-types: web
+      - run:
+          name: pull from dockerhub and push to heroku
+          command: |
+            docker pull ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1}
+            docker tag ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1} /oc-lettings/web
+            heroku container:login
+            heroku container:push --app=/oc-lettings/web web
+            heroku container:release -a /oc-lettings/web web
 
 workflows:
   build_and_test:
@@ -80,7 +82,6 @@ workflows:
       #         only: main
   deploy_to_heroku:
     jobs:
-      # - heroku/push-docker-image
       - deploy_docker_to_heroku:
           requires:
             - build_and_push_docker_image
