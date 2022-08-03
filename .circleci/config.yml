@@ -79,7 +79,6 @@ jobs:
           process-types: web 
       - heroku/release-docker-image
 
-
 workflows:
   build_and_test:
     jobs:
