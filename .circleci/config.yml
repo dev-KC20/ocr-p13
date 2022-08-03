@@ -5,6 +5,8 @@
 version: 2.1
 orbs:
   heroku: circleci/heroku@0.0.10
+
+
 jobs:
   build_lint_and_test:
     docker:
@@ -29,49 +31,40 @@ jobs:
           command: |
             flake8 
       - run:
-          name: run unti tests
+          name: run unit tests
           command: |
             pytest
       - store_artifacts:
           path: test-reports/
           destination: python_app
+
   build_and_push_docker_image:
     docker:
       - image: cimg/python:3.10
     steps:
-      # get the src from GH
+      # get the Dockerfile src from GH .circleci\images\primary\Dockerfile
       - checkout
-      # ... steps for building/testing app ...
       - setup_remote_docker:
           version: 20.10.14
           docker_layer_caching: true
-      # build and push Docker image
+      # build from the attached Dockerfile then push image to Docker Hub
       - run: 
           name: publish to dockerhub
           command: |
-          echo ${DOCKER_PASSWORD] | docker login -u ${DOCKER_USERNAME} --password-stdin
-          docker build -t ${DOCKER_USERNAME}/oc_lettings:$CIRCLE_SHA1 .
-          docker push ${DOCKER_USERNAME}/oc_lettings:$CIRCLE_SHA1
+            docker build -t ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1} .
+            echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
+            docker push ${DOCKER_USERNAME}/oc_lettings:${CIRCLE_SHA1}
+
   deploy_docker_to_heroku:
-    executor: heroku/default
+    # orbs used
     steps:
-      # ... steps for building/testing app ...
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
-      - docker/check:
-          docker-username: ${DOCKER_USERNAME}
-          docker-password: ${DOCKER_PASSWORD}
-      - checkout
+      # install heroku CLI
       - heroku/install
       - run: heroku container:login
-      - run:
-          name: push to heroku registry
-          command: |
-          # docker tag ${DOCKER_USERNAME}/oc-lettings:latest registry.heroku.com/${HEROKU_APP_NAME}/web
-          heroku/push-docker-image ${DOCKER_USERNAME}/oc-lettings:latest
-          docker push registry.heroku.com/${HEROKU_APP_NAME}/web
-  
+      - heroku/push-docker-image ${DOCKER_USERNAME}/oc-lettings:${CIRCLE_SHA1}
+          # process-types: web
+      - heroku/release-docker-image:
+          process-types: web
 
 workflows:
   build_and_test:
@@ -88,7 +81,7 @@ workflows:
   deploy_to_heroku:
     jobs:
       # - heroku/push-docker-image
-      - deploy_docker_to_heroku
+      - deploy_docker_to_heroku:
           requires:
             - build_and_push_docker_image
       #     filters:

@@ -18,3 +18,4 @@ ADD . /oc_lettings/
 
 # # run the server -> use docker-compose instead
 # CMD python manage.py runserver 0.0.0.0:8000
+# CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
