@@ -56,7 +56,7 @@ workflows:
             - lint_and_test
       - docker_orb/publish:
           dockerfile: Dockerfile 
-          image: ${DOCKER_USERNAME}/lettings
+          image: "devkc20/lettings"
           docker-password: DOCKER_PASSWORD 
           docker-username: DOCKER_USERNAME 
           path: .circleci/images/primary
