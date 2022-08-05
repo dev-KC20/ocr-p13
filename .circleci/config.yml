@@ -56,7 +56,9 @@ workflows:
             - lint_and_test
       - docker_orb/publish:
           dockerfile: Dockerfile 
-          image: "${DOCKER_USERNAME}/lettings"
+          image: ${DOCKER_USERNAME}/lettings
           docker-password: DOCKER_PASSWORD 
           docker-username: DOCKER_USERNAME 
           path: .circleci/images/primary
+          requires:
+            - lint_and_test
