@@ -51,16 +51,11 @@ jobs:
   deploy_docker_to_heroku:
     executor: heroku/default
     steps:
-      - heroku/install
+      - checkout
       - heroku/check-authentication:
           print-whoami: false
-      - docker_orb/push:
-          image: "devkc20/lettings"
-          registry: "registry.heroku.com/${HEROKU_APP_NAME}/web"
-        # inspired from docker tag <image> registry.heroku.com/<app>/<process-type>
-      - heroku/release-docker-image:
-          process-types: web 
-        # inspired from docker push registry.heroku.com/<app>/<process-type>
+      - heroku/deploy-via-git
+    
 
 workflows:
   build_and_deploy:
@@ -80,3 +75,7 @@ workflows:
       - deploy_docker_to_heroku:
           requires:
             - docker_orb/publish
+          # filters:
+          #   branches:
+          #     only:
+          #       - main
