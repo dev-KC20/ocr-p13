@@ -56,7 +56,7 @@ jobs:
           print-whoami: false
       - docker_orb/push:
           image: "devkc20/lettings"
-          registry: registry.heroku.com/HEROKU_APP_NAME/web
+          registry: "registry.heroku.com/${HEROKU_APP_NAME}/web"
         # inspired from docker tag <image> registry.heroku.com/<app>/<process-type>
       - heroku/release-docker-image:
           process-types: web 
