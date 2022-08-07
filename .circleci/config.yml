@@ -46,7 +46,14 @@ jobs:
       # build from the attached Dockerfile then push image to Docker Hub
       - docker_orb/check:
           docker-password: DOCKER_PASSWORD 
-          docker-username: DOCKER_USERNAME 
+          docker-username: DOCKER_USERNAME
+      - docker_orb/build:
+          dockerfile: Dockerfile 
+          image: "devkc20/lettings"
+          path: .circleci/images/primary 
+      - docker_orb/push:
+          image: "devkc20/lettings"
+          digest-path: /tmp/digest.txt
 
   deploy_docker_to_heroku:
     executor: heroku/default
@@ -61,10 +68,11 @@ jobs:
       - run:
           name: deploy manually on heroku
           command: |
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push web --app ${HEROKU_APP_NAME}
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release web --app ${HEROKU_APP_NAME}
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
+            sudo curl https://cli-assets.heroku.com/install.sh | sh
+            heroku container:login
+            heroku container:push web --app ${HEROKU_APP_NAME}
+            heroku container:release web --app ${HEROKU_APP_NAME}
+            heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
 
 
 workflows:
@@ -74,17 +82,17 @@ workflows:
       - check_docker_image:
           requires:
             - lint_and_test
-      - docker_orb/publish:
-          dockerfile: Dockerfile 
-          image: "devkc20/lettings"
-          docker-password: DOCKER_PASSWORD 
-          docker-username: DOCKER_USERNAME 
-          path: .circleci/images/primary
-          requires:
-            - lint_and_test
+      # - docker_orb/publish:
+      #     dockerfile: Dockerfile 
+      #     image: "devkc20/lettings"
+      #     docker-password: DOCKER_PASSWORD 
+      #     docker-username: DOCKER_USERNAME 
+      #     path: .circleci/images/primary
+      #     requires:
+      #       - lint_and_test
       - deploy_docker_to_heroku:
           requires:
-            - docker_orb/publish
+            - check_docker_image
           filters:
             branches:
               only:
