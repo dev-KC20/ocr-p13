@@ -45,8 +45,8 @@ jobs:
           docker_layer_caching: true
       # build from the attached Dockerfile then push image to Docker Hub
       - docker_orb/check:
-          docker-password: ${DOCKER_PASSWORD} 
-          docker-username: ${DOCKER_USERNAME} 
+          docker-password: DOCKER_PASSWORD 
+          docker-username: DOCKER_USERNAME 
 
   deploy_docker_to_heroku:
     executor: heroku/default
@@ -58,18 +58,14 @@ jobs:
       - heroku/check-authentication:
           print-whoami: false
       - heroku/install
-        - run:
-        name: Deploy manually app on heroku
-        command: |
-          HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
-          HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push web --app ${HEROKU_APP_NAME}
-          HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release web --app ${HEROKU_APP_NAME}
-          HEROKU_API_KEY=${HEROKU_API_KEY} heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
-      # - heroku/deploy-via-git
-      # HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SECRET_KEY=${SECRET_KEY} --app ${HEROKU_APP_NAME}
-      # HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set DEBUG=${DEBUG} --app ${HEROKU_APP_NAME}
-      # HEROKU_API_KEY=${HEROKU_API_KEY} heroku config:set SENTRY_DSN=${SENTRY_DSN} --app ${HEROKU_APP_NAME}
-    
+      - run:
+          name: deploy manually on heroku
+          command: |
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push web --app ${HEROKU_APP_NAME}
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release web --app ${HEROKU_APP_NAME}
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
+
 
 workflows:
   build_and_deploy:
@@ -81,8 +77,8 @@ workflows:
       - docker_orb/publish:
           dockerfile: Dockerfile 
           image: "devkc20/lettings"
-          docker-password: ${DOCKER_PASSWORD} 
-          docker-username: ${DOCKER_USERNAME} 
+          docker-password: DOCKER_PASSWORD 
+          docker-username: DOCKER_USERNAME 
           path: .circleci/images/primary
           requires:
             - lint_and_test
