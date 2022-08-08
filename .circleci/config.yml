@@ -36,7 +36,7 @@ jobs:
   check_docker_image:
     docker:
       - image: cimg/python:3.10
-    resource_class: small
+    resource_class: medium
     steps:
       # get the Dockerfile src from GH .circleci\images\primary\Dockerfile
       - checkout
@@ -50,10 +50,10 @@ jobs:
       - docker_orb/build:
           dockerfile: Dockerfile 
           path: .circleci/images/primary 
-          image: "devkc20/lettings"
+          image: IMAGE_NAME
           docker-context: . 
       - docker_orb/push:
-          image: "devkc20/lettings"
+          image: IMAGE_NAME
           digest-path: /tmp/digest.txt
 
   deploy_docker_to_heroku:
@@ -63,19 +63,19 @@ jobs:
       - setup_remote_docker:
           version: 20.10.14
           docker_layer_caching: true
-      - docker_orb/build:
-          docker-context: . 
-          dockerfile: Dockerfile 
-          path: .circleci/images/primary 
-          image: "devkc20/lettings"
-      - heroku/check-authentication:
-          print-whoami: false
-      - heroku/install
-      - run: heroku container:login
-      - heroku/push-docker-image:
-          process-types: web
-      - heroku/release-docker-image:
-          process-types: web
+      # - docker_orb/build:
+      #     docker-context: . 
+      #     dockerfile: Dockerfile 
+      #     path: .circleci/images/primary 
+      #     image: IMAGE_NAME
+      # - heroku/check-authentication:
+      #     print-whoami: false
+      # - heroku/install
+      # - run: heroku container:login
+      # - heroku/push-docker-image:
+      #     process-types: web
+      # - heroku/release-docker-image:
+      #     process-types: web
       # - run:
       #     name: deploy manually on heroku
       #     command: |
@@ -84,6 +84,12 @@ jobs:
       #       heroku container:push web --app ${HEROKU_APP_NAME}
       #       heroku container:release web --app ${HEROKU_APP_NAME}
       #       heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
+      - run:
+          name: deploy from docker to heroku
+          command: |
+            docker login --username=_ --password=HEROKU_API_KEY registry.heroku.com
+            docker tag IMAGE_NAME registry.heroku.com/HEROKU_APP_NAME/web
+            docker push registry.heroku.com/HEROKU_APP_NAME/web
 
 
 workflows:
