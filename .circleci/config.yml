@@ -50,10 +50,10 @@ jobs:
       - docker_orb/build:
           dockerfile: Dockerfile 
           path: .circleci/images/primary 
-          image: IMAGE_NAME
+          image: ${IMAGE_NAME}
           docker-context: . 
       - docker_orb/push:
-          image: IMAGE_NAME
+          image: ${IMAGE_NAME}
           digest-path: /tmp/digest.txt
 
   deploy_docker_to_heroku:
