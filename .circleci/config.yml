@@ -54,7 +54,6 @@ jobs:
           docker-context: . 
       - docker_orb/push:
           image: ${IMAGE_NAME}
-          digest-path: /tmp/digest.txt
 
   deploy_docker_to_heroku:
     executor: heroku/default
