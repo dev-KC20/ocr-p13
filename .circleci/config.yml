@@ -43,12 +43,17 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true
       # build from the attached Dockerfile then push image to Docker Hub
-      - run:
-          name: build and deploy to dockerhub
-          command: |
-            echo "$DOCKER_PASSWORD" | docker login --username=$DOCKER_USERNAME --password-stdin
-            docker image build --file=.circleci/images/primary/Dockerfile --tag=$DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1 --tag=$DOCKER_USERNAME/$IMAGE_REPO:latest .
-            docker image push $DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1 
+      - docker_orb/check:
+          docker-password: DOCKER_PASSWORD 
+          docker-username: DOCKER_USERNAME
+      - docker_orb/build:
+          dockerfile: Dockerfile 
+          path: .circleci/images/primary 
+          image: ${IMAGE_NAME}
+          docker-context: . 
+      - docker_orb/push:
+          image: ${IMAGE_NAME}
+          digest-path: /tmp/digest.txt
 
   deploy_docker_to_heroku:
     executor: heroku/default
