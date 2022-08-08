@@ -71,14 +71,19 @@ jobs:
       - heroku/check-authentication:
           print-whoami: false
       - heroku/install
-      - run:
-          name: deploy manually on heroku
-          command: |
-            sudo curl https://cli-assets.heroku.com/install.sh | sh
-            heroku container:login
-            heroku container:push web --app ${HEROKU_APP_NAME}
-            heroku container:release web --app ${HEROKU_APP_NAME}
-            heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
+      - run: heroku container:login
+      - heroku/push-docker-image:
+          process-types: web
+      - heroku/release-docker-image:
+          process-types: web
+      # - run:
+      #     name: deploy manually on heroku
+      #     command: |
+      #       sudo curl https://cli-assets.heroku.com/install.sh | sh
+      #       heroku container:login
+      #       heroku container:push web --app ${HEROKU_APP_NAME}
+      #       heroku container:release web --app ${HEROKU_APP_NAME}
+      #       heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
 
 
 workflows:
