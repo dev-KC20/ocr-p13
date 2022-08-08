@@ -49,8 +49,9 @@ jobs:
           docker-username: DOCKER_USERNAME
       - docker_orb/build:
           dockerfile: Dockerfile 
-          image: "devkc20/lettings"
           path: .circleci/images/primary 
+          image: "devkc20/lettings"
+          docker-context: . 
       - docker_orb/push:
           image: "devkc20/lettings"
           digest-path: /tmp/digest.txt
@@ -62,6 +63,11 @@ jobs:
       - setup_remote_docker:
           version: 20.10.14
           docker_layer_caching: true
+      - docker_orb/build:
+          docker-context: . 
+          dockerfile: Dockerfile 
+          path: .circleci/images/primary 
+          image: "devkc20/lettings"
       - heroku/check-authentication:
           print-whoami: false
       - heroku/install
