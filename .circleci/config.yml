@@ -1,11 +1,10 @@
-# at src commit build docker image of the site, 
-# lint & test it, 
+# at src commit build docker image of the site,
+# lint & test it,
 # if ok then push it to dockerhub
 # if ok then deploy it to heroku
 version: 2.1
 
 orbs:
-  docker_orb: circleci/docker@2.1.2
   heroku: circleci/heroku@1.2.6
 
 jobs:
@@ -17,14 +16,14 @@ jobs:
       # get the src from GH
       - checkout
       - run:
-          name: install packages 
+          name: install packages
           command: |
             pip install --user --no-cache-dir -r requirements.txt
           when: always
       - run:
           name: check linting
           command: |
-            flake8 
+            flake8
       - run:
           name: run unit tests
           command: |
@@ -44,17 +43,12 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true
       # build from the attached Dockerfile then push image to Docker Hub
-      - docker_orb/check:
-          docker-password: DOCKER_PASSWORD 
-          docker-username: DOCKER_USERNAME
-      - docker_orb/build:
-          dockerfile: Dockerfile 
-          path: .circleci/images/primary 
-          image: ${IMAGE_NAME}
-          docker-context: . 
-      - docker_orb/push:
-          image: ${IMAGE_NAME}
-          digest-path: /tmp/digest.txt
+      - run:
+          name: build and deploy to dockerhub
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login --username=$DOCKER_USERNAME --password-stdin
+            docker image build --file=.circleci/images/primary/Dockerfile --tag=$DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1 --tag=$DOCKER_USERNAME/$IMAGE_REPO:latest .
+            docker image push $DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1 
 
   deploy_docker_to_heroku:
     executor: heroku/default
@@ -63,34 +57,12 @@ jobs:
       - setup_remote_docker:
           version: 20.10.14
           docker_layer_caching: true
-      # - docker_orb/build:
-      #     docker-context: . 
-      #     dockerfile: Dockerfile 
-      #     path: .circleci/images/primary 
-      #     image: IMAGE_NAME
-      # - heroku/check-authentication:
-      #     print-whoami: false
-      # - heroku/install
-      # - run: heroku container:login
-      # - heroku/push-docker-image:
-      #     process-types: web
-      # - heroku/release-docker-image:
-      #     process-types: web
-      # - run:
-      #     name: deploy manually on heroku
-      #     command: |
-      #       sudo curl https://cli-assets.heroku.com/install.sh | sh
-      #       heroku container:login
-      #       heroku container:push web --app ${HEROKU_APP_NAME}
-      #       heroku container:release web --app ${HEROKU_APP_NAME}
-      #       heroku run python manage.py migrate -a ${HEROKU_APP_NAME}
       - run:
           name: deploy from docker to heroku
           command: |
             docker login --username=_ --password=HEROKU_API_KEY registry.heroku.com
             docker tag IMAGE_NAME registry.heroku.com/HEROKU_APP_NAME/web
             docker push registry.heroku.com/HEROKU_APP_NAME/web
-
 
 workflows:
   build_and_deploy:
@@ -99,14 +71,6 @@ workflows:
       - check_docker_image:
           requires:
             - lint_and_test
-      # - docker_orb/publish:
-      #     dockerfile: Dockerfile 
-      #     image: "devkc20/lettings"
-      #     docker-password: DOCKER_PASSWORD 
-      #     docker-username: DOCKER_USERNAME 
-      #     path: .circleci/images/primary
-      #     requires:
-      #       - lint_and_test
       - deploy_docker_to_heroku:
           requires:
             - check_docker_image
