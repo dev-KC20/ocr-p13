@@ -3,7 +3,11 @@ import os
 
 from decouple import config
 import django_heroku
+
 # import dj_database_url
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,7 +22,8 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost",  '.herokuapp.com', 'young-reaches-84360.herokuapp.com']
+# ALLOWED_HOSTS = ["127.0.0.1", "localhost",  '.herokuapp.com', 'young-reaches-84360.herokuapp.com']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 
 
 # Application definition
@@ -146,3 +151,21 @@ LOGGING = {
 
 # django heroku settings
 django_heroku.settings(locals())
+
+# Sentry monitoring
+
+sentry_sdk.init(
+    dsn="https://c66904a2c7ef4bcfababc9626e08de50@o1352712.ingest.sentry.io/6634247",
+    integrations=[
+        DjangoIntegration(),
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=0.5,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)

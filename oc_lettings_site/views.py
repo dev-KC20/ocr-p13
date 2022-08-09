@@ -15,3 +15,8 @@ from django.shortcuts import render
 
 def index(request):
     return render(request, 'oc_lettings_site/index.html')
+
+
+# triggers an error that sentry monitoring will catch and show
+def trigger_error(request):
+    division_by_zero = 1 / 0
