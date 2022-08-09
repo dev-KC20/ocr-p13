@@ -152,7 +152,7 @@ LOGGING = {
 django_heroku.settings(locals())
 CSRF_TRUSTED_ORIGINS = [
     "https://young-reaches-84360.herokuapp.com",
-    "http://young-reaches-84360.herokuapp.com"
+    "http://young-reaches-84360.herokuapp.com",
 ]
 # Sentry monitoring
 
