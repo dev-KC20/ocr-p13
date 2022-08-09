@@ -15,4 +15,5 @@ exclude=
     __pycache__,
     # django migrations & other tests
     */migrations/*
+    */old_migration_folder/*
     */tests/*

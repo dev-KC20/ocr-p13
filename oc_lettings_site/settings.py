@@ -24,7 +24,6 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost",  '.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
-    'oc_lettings_site.apps.OCLettingsSiteConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,6 +33,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'lettings',
     'profiles',
+    'oc_lettings_site',
 ]
 
 MIDDLEWARE = [
