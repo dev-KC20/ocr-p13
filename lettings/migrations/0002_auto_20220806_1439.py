@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('lettings', '0001_initial'),
-        ("oc_lettings_site", "0003_alter_address_id_alter_letting_id_alter_profile_id_and_more"),
+        # ("oc_lettings_site", "0003_alter_address_id_alter_letting_id_alter_profile_id_and_more"),
     ]
 
     operations = [
