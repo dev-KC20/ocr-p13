@@ -58,9 +58,9 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true
       - heroku/install
-      - run: |
       # the create line is usually commented
       # if you need to re create the app, please comment the line out for one commit only.
+      - run: |
           heroku apps:create $HEROKU_APP_NAME --region eu --addons=heroku-postgresql
           heroku config:set SECRET_KEY=$SECRET_KEY -a $HEROKU_APP_NAME
           heroku config:set DEBUG=false -a $HEROKU_APP_NAME
