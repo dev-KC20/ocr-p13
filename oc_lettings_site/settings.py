@@ -22,7 +22,8 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 
 
 # Application definition
@@ -123,14 +124,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_ROOT = '/static/'
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# heroku & static file
+WHITENOISE_USE_FINDERS = True
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# django heroku settings
+# django_heroku.settings(locals(), staticfiles=False)
+django_heroku.settings(locals())
+CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com', 'http://*.herokuapp.com']
 
 LOGGING = {
     'version': 1,
@@ -148,12 +155,6 @@ LOGGING = {
     },
 }
 
-# heroku & static file
-WHITENOISE_USE_FINDERS = True
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# django heroku settings
-django_heroku.settings(locals(), staticfiles=False)
-CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com', 'http://*.herokuapp.com']
 
 # Sentry monitoring
 
