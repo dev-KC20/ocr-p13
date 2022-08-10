@@ -4,7 +4,7 @@ import os
 from decouple import config
 import django_heroku
 
-import dj_database_url
+# import dj_database_url
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
