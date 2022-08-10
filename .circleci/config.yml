@@ -62,11 +62,11 @@ jobs:
       # if you need to re create the app, please comment the line out for one commit only.
           # heroku apps:create $HEROKU_APP_NAME --region eu --addons=heroku-postgresql
           # heroku config:set CSRF_TRUSTED_ORIGINS=$CSRF_TRUSTED_ORIGINS -a $HEROKU_APP_NAME
+          # heroku apps:create $HEROKU_APP_NAME --region eu 
       - run:
           name: deploy container to heroku
           command: |
             heroku container:login
-      # heroku apps:create $HEROKU_APP_NAME --region eu 
             heroku config:set SECRET_KEY=$SECRET_KEY -a $HEROKU_APP_NAME
             heroku config:set DEBUG=false -a $HEROKU_APP_NAME
             heroku config:set ALLOWED_HOSTS=$ALLOWED_HOSTS -a $HEROKU_APP_NAME
