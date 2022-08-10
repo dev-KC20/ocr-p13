@@ -89,6 +89,9 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 |       | X | X |   | DOCKER_USERNAME      | yourdockerhubaccount            |  
 |       | X | X |   | DOCKER_PASSWORD      | *yourdockerhubpassword*         |  
 |       | X | X | X | SENTRY_DSN           | sentry-url-to-sent-events-to    |  
+|       | X |   |   | ADMIN_USERNAME       | the-app-superuser               |  
+|       | X |   |   | ADMIN_PASSWORD       | the-app-superuser-password      |  
+|       | X |   |   | ADMIN_EMAIL          | the-app-superuser-email         |  
 
 (l): local including local container  
 (c): circleci  
@@ -96,18 +99,19 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
  X: same value everywhere  
  O: depending on context  
 and used to store images on the dockerhub: IMAGE_REPO=oclettings-image-repo
+and to create the initial superuser on heroku ADMIN_*
 ``` 
 
       
-7. create and run Django models migration    
+1. create and run Django models migration    
     `python manage.py makemigrations`     
     `python manage.py migrate`    
     
-8. the Django superuser is:   
+2. the Django superuser is:   
     `Username: admin`  
     `Password: Abcd1234!`  
 
-9. Eventually run the server and follow instructions   
+3. Eventually run the server and follow instructions   
     `python manage.py runserver`     
 
 
@@ -140,29 +144,32 @@ OC Lettings provides a proofchecked docker image that you collect by the followi
     remember credentials were provided on step 8. of the above '1. local' section. 
 
  
-You could also do stepS 1,2 &3 in one by:   
-    `docker run --env-file .env -p 8000:8000 -i -t $DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1`     
+You could also do stepS 1,2 &3 in one with:   
+
+`docker run --env-file .env -p 8000:8000 -i -t $DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1`     
   
+
 ![](img/p13-docker-local-run-2022-08-09-191638.png)  
   
 
 
-## 3. remote
+## 3. remote  
+  
 
-OC Lettings had already a good practise to commit its source code changes to a github repo.  
+OC Lettings had already a good practise to commit its source code changes to a github repo.   
 We decided to add remote checks of the source base for linting issues as well as tests regression.  
-If successfull, a docker image is built and store on the company DockerHub repo.  
+If successfull, a docker image is built and stored on the company DockerHub repo.  
 It is this very image that we recommend the developer use when they need to locally run the OC Lettings web site.  
   
-The last part of our CI/CD pipeline is to push the image to our heroku app and run it from there.
-  
+The last part of our CI/CD pipeline is to push the image to our heroku app and run it from there.  
+   
 ![pipeline organisation](img/p13-pipeline-organisation.png)  
   
-Also shown on the picture, the monitoring is done thru the sentry.io solution.
+Also shown on the picture, the monitoring is done thru the sentry.io solution.  
 
 
 ### What do you need to run the CI/CD pipeline
-
+  
 - GitHub account in order to clone and host your own code  
     
 ![github repo](img/p13-github-repo-2022-08-09-191023.png)  
@@ -174,15 +181,38 @@ Also shown on the picture, the monitoring is done thru the sentry.io solution.
 - Dockerhub account in order to push and pull the web app images from and to.  
 
 
-- Heroku account in order to run the web app image.
-
-![heroku deploy](img/p13-heroku-activity-2022-08-09-190350.png)  
-
-- Sentry account in order to hook it to your app logs and set email alerts in case of issues during the operations.
+- Heroku account in order to run the web app image.  
   
+![heroku deploy](img/p13-heroku-activity-2022-08-09-190350.png)  
+  
+- Sentry account in order to hook it to your app logs and set email alerts in case of issues during the operations.  
+   
 ![sentry monitoring](img/p13-sentry-events-2022-08-09-190036.png)  
+  
+You will have to collect on circleci, dockerhub, heroku and sentry the token keys described in the above section 6 table and register them back the project environment variables as per the table.  
+  
 
+We also strongly recommend that you install the circleci CLI and the heroku CLI. It will ease working with the pipeline and the app.  
+For instance before sending a new commit to the pipeline, the CLI is handy to check the syntax of your configuration file with :  
 
+`circleci config validate .circleci/config.yml`  
+  
+  
+### How it works  
+  
+From that step on, every time a commit is made in the github code repo, the circleci pipeline will run to check linting, test and if fine push the site image to the dockerhub.  
+
+When the commit is made on the 'main' branch, it will in addition deploy a new release of the site on heroku.  
+  
+It is the config.yml file located under .circleci in the source code that buildq the circleci pipeline which will run once per commit.  
+  
+If you wich to rebuild the heroku hosted app, you can destroy it with the circleci CLI:  
+
+ `heroku apps:destroy $HEROKU_APP_NAME`   
+
+Before the next commit, you should update the config.yml file by commenting out the line:
+
+ `heroku apps:create $HEROKU_APP_NAME --region eu `   
 
 ---
 

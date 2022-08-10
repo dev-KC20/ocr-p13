@@ -72,13 +72,16 @@ jobs:
             heroku config:set ALLOWED_HOSTS=$ALLOWED_HOSTS -a $HEROKU_APP_NAME
             heroku config:set DISABLE_COLLECTSTATIC=$DISABLE_COLLECTSTATIC -a $HEROKU_APP_NAME
             heroku config:set SENTRY_DSN=$SENTRY_DSN -a $HEROKU_APP_NAME
-            heroku container:push -a $HEROKU_APP_NAME web
-            heroku container:release -a $HEROKU_APP_NAME web
-      - run:
-          name: initiate app db on heroku
-          command: |
+            heroku config:set ADMIN_USERNAME=$ADMIN_USERNAME -a $HEROKU_APP_NAME
+            heroku config:set ADMIN_PASSWORD=$ADMIN_PASSWORD -a $HEROKU_APP_NAME
+            heroku config:set ADMIN_EMAIL=$ADMIN_EMAIL -a $HEROKU_APP_NAME
             heroku container:run python manage.py makemigrations -a $HEROKU_APP_NAME
             heroku container:run python manage.py migrate -a $HEROKU_APP_NAME
+            heroku container:push -a $HEROKU_APP_NAME web
+            heroku container:release -a $HEROKU_APP_NAME web
+      # - run:
+      #     name: initiate app db on heroku
+      #     command: |
       # - heroku/check-authentication:
       #     print-whoami: false
       # - heroku/push-docker-image:
