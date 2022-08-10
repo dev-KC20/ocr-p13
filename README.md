@@ -14,6 +14,7 @@
   - [Quick Start docker](#2-local-docker)
   - [Quick Start remote](#3-remote)
   - [Security and Privacy](#security-and-privacy)
+  - [Refactoring ](#refactor)
   - [Tests passed](#tests-passed)
   - [Crédits and good reads](#credits-and-good-reads)
   - [PEP 8 check](#pep-8-check)
@@ -26,11 +27,11 @@
 
 This code is the last part of the openclassrooms learning adventure split in 13 business alike projects. 
 
-As a junior deelopper to the OC Lettngs company, I've been asked to refactor the letting site as well as to include the renewed site into a continuous integration and a continuous delivery process **CI/CD**.
+As a junior developper of the OC Lettings company, you've been asked to refactor the Lettings web site as well as to include the refreshed site into a continuous integration and a continuous delivery process **CI/CD**.
   
   
-Some materials or links may have rights to be granted by https://openclassrooms.com. 
-The additionnal code follows "CC BY-SA ".
+Some materials or links here may have rights to be granted to https://openclassrooms.com. 
+The additionnal material follows "CC BY-SA ".
   
 ** Not to be used for production **  
 
@@ -43,20 +44,20 @@ The additionnal code follows "CC BY-SA ".
 
 
 
-Orange County Lettings web site
-
-Three means to run the OC Lettings web site are available :
-
+Orange County Lettings decided to include its web site into a continuous improvement wheel.  
+Three means to run the OC Lettings web site are available :  
+  
 ![](img/p13-where-to-run.png)  
   
 **Have fun, Devs!**
   
 
+## 1. local  
 
+`instructions were tested on Windows10, VSCodium 1.70, Python 3.10, Django 4.0`
 
-## 1. local
+In order to install and use locally the O.C. Lettings site, assuming you have Python 3 installed on your computer, open a bash prompt and : 
 
-In order to install and use locally the O.C. Lettings site, assuming you have Python 3 installed on your Windows computer, open bash prompt: 
 
 1.  clone the ocr-p13 directory into your local copy.  
     `git clone https://github.com/dev-KC20/ocr-p13.git`   
@@ -70,22 +71,32 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 4.  do not forget to active the ENV virtual environment  
     `ENV\scripts\activate.bat`   
 
-5.  install all the requirments,  
+5.  install all the requirements,  
     `pip install -r requirements.txt`   
 
 6.  create a .env file in order to keep all secrets local and safe (see hereunder for details),  
-     ``` 
-        SECRET_KEY = *"yourverystrongandsecurekey"*
-        DEBUG = True
-        HEROKU_API_KEY=*"yourherokuapikey"*
-        HEROKU_APP_NAME="the-app-name-from-heroku"
-        DOCKER_USERNAME=yourdockerhubaccount
-        DOCKER_PASSWORD=yourdockerhubpassword
-        IMAGE_REPO=oclettings-image-repo
-        SENTRY_DSN=the-sentry-url-to-sent-events-to
-        ALLOWED_HOSTS=localhost, 127.0.0.1
+   
+``` 
+| where |(l)|(c)|(h)|   what key           |        content                  |  
+|-------| --| --| --|----------------------|---------------------------------|  
+|       | X | X | X | SECRET_KEY           | *yourverystrongandsecurekey*    |  
+|       | O | O | O | DEBUG                | False                           |  
+|       | O | O | O | ALLOWED_HOSTS        | localhost, 127.0.0.1,.heroku.com|  
+|       |   |   | O | CSRF_TRUSTED_ORIGINS |         .herokuapp.com          |  
+|       | X | X | X | DISABLE_COLLECTSTATIC|         1                       |  
+|       |   | X |   | HEROKU_API_KEY       | *yourherokuapikey*              |  
+|       |   | X |   | HEROKU_APP_NAME      | the-app-name-from-heroku        |  
+|       | X | X |   | DOCKER_USERNAME      | yourdockerhubaccount            |  
+|       | X | X |   | DOCKER_PASSWORD      | *yourdockerhubpassword*         |  
+|       | X | X | X | SENTRY_DSN           | sentry-url-to-sent-events-to    |  
 
-     ``` 
+(l): local including local container  
+(c): circleci  
+(h): heroku   
+ X: same value everywhere  
+ O: depending on context  
+and used to store images on the dockerhub: IMAGE_REPO=oclettings-image-repo
+``` 
 
       
 7. create and run Django models migration    
@@ -106,8 +117,31 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 
 ## 2. local docker
   
+We assume that you have a running docker daemon set on your computer.  
+
 ![](img/p13-dockerhub-tags-2022-08-09-190600.png)  
-  
+
+OC Lettings provides a proofchecked docker image that you collect by the following instructions:  
+
+1. pull the lastest image available:  
+    `docker pull $DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1`     
+
+2. get and write down the docker image tag:  
+    `docker images -q $DOCKER_USERNAME/$IMAGE_REPO`     
+
+3. run the docker image tag:  
+    `docker run --env-file .env -d -p 8000:8000 docker-image-tag`     
+
+4. open your browser and navigate to:  
+    `https://localhost:8000`      
+    or  
+    `https://localhost:8000/admin/`    
+
+    remember credentials were provided on step 8. of the above '1. local' section. 
+
+ 
+You could also do stepS 1,2 &3 in one by:   
+    `docker run --env-file .env -p 8000:8000 -i -t $DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1`     
   
 ![](img/p13-docker-local-run-2022-08-09-191638.png)  
   
@@ -115,87 +149,40 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 
 ## 3. remote
 
-### Prérequis
-
-- Compte GitHub avec accès en lecture à ce repository
-- Git CLI
-- SQLite3 CLI
-- Interpréteur Python, version 3.6 ou supérieure
+OC Lettings had already a good practise to commit its source code changes to a github repo.  
+We decided to add remote checks of the source base for linting issues as well as tests regression.  
+If successfull, a docker image is built and store on the company DockerHub repo.  
+It is this very image that we recommend the developer use when they need to locally run the OC Lettings web site.  
   
+The last part of our CI/CD pipeline is to push the image to our heroku app and run it from there.
+  
+![pipeline organisation](img/p13-pipeline-organisation.png)  
+  
+Also shown on the picture, the monitoring is done thru the sentry.io solution.
+
+
+### What do you need to run the CI/CD pipeline
+
+- GitHub account in order to clone and host your own code  
+    
 ![github repo](img/p13-github-repo-2022-08-09-191023.png)  
+   
+- Circleci account in order to design and operate the CI/CD pipeline  
   
 ![circleci](img/p13-circleci-pipelines-2022-08-09-190809.png)  
    
+- Dockerhub account in order to push and pull the web app images from and to.  
+
+
+- Heroku account in order to run the web app image.
+
 ![heroku deploy](img/p13-heroku-activity-2022-08-09-190350.png)  
+
+- Sentry account in order to hook it to your app logs and set email alerts in case of issues during the operations.
   
 ![sentry monitoring](img/p13-sentry-events-2022-08-09-190036.png)  
 
 
-
-Dans le reste de la documentation sur le développement local, il est supposé que la commande `python` de votre OS shell exécute l'interpréteur Python ci-dessus (à moins qu'un environnement virtuel ne soit activé).
-
-### macOS / Linux
-
-#### Cloner le repository
-
-- `cd /path/to/put/project/in`
-- `git clone https://github.com/OpenClassrooms-Student-Center/Python-OC-Lettings-FR.git`
-
-#### Créer l'environnement virtuel
-
-- `cd /path/to/Python-OC-Lettings-FR`
-- `python -m venv venv`
-- `apt-get install python3-venv` (Si l'étape précédente comporte des erreurs avec un paquet non trouvé sur Ubuntu)
-- Activer l'environnement `source venv/bin/activate`
-- Confirmer que la commande `python` exécute l'interpréteur Python dans l'environnement virtuel
-`which python`
-- Confirmer que la version de l'interpréteur Python est la version 3.6 ou supérieure `python --version`
-- Confirmer que la commande `pip` exécute l'exécutable pip dans l'environnement virtuel, `which pip`
-- Pour désactiver l'environnement, `deactivate`
-
-#### Exécuter le site
-
-- `cd /path/to/Python-OC-Lettings-FR`
-- `source venv/bin/activate`
-- `pip install --requirement requirements.txt`
-- `python manage.py runserver`
-- Aller sur `http://localhost:8000` dans un navigateur.
-- Confirmer que le site fonctionne et qu'il est possible de naviguer (vous devriez voir plusieurs profils et locations).
-
-#### Linting
-
-- `cd /path/to/Python-OC-Lettings-FR`
-- `source venv/bin/activate`
-- `flake8`
-
-#### Tests unitaires
-
-- `cd /path/to/Python-OC-Lettings-FR`
-- `source venv/bin/activate`
-- `pytest`
-
-#### Base de données
-
-- `cd /path/to/Python-OC-Lettings-FR`
-- Ouvrir une session shell `sqlite3`
-- Se connecter à la base de données `.open oc-lettings-site.sqlite3`
-- Afficher les tables dans la base de données `.tables`
-- Afficher les colonnes dans le tableau des profils, `pragma table_info(oc_lettings_site_profile);`
-- Lancer une requête sur la table des profils, `select user_id, favorite_city from
-  oc_lettings_site_profile where favorite_city like 'B%';`
-- `.quit` pour quitter
-
-#### Panel d'administration
-
-- Aller sur `http://localhost:8000/admin`
-- Connectez-vous avec l'utilisateur `admin`, mot de passe `Abc1234!`
-
-### Windows
-
-Utilisation de PowerShell, comme ci-dessus sauf :
-
-- Pour activer l'environnement virtuel, `.\venv\Scripts\Activate.ps1` 
-- Remplacer `which <my-command>` par `(Get-Command <my-command>).Path`
 
 ---
 
@@ -212,12 +199,12 @@ Utilisation de PowerShell, comme ci-dessus sauf :
 
 ### Secret's management
 
-    Django use "secret" to generate its certificates and advises to keep this key secret.
+    Django uses "secret" to generate its certificates and advises to keep the secret key, secret.
     OC Lettings uses the python-decouple module to replace the secret key's values of the settings.py file by their decouple link :
     Storing actual secret in a .env file make its possible to keep them local provided one does exclude the .env file from the commits by regitering it in .gitignore.  
   
     When being remote, it is important that one creates environment variables of the same key and values as the ones stored locally in the .env file. 
-    Some keys require a small change like :  
+    When remote, some key's value require a small change like the following one :  
                                                                                              `ALLOWED_HOSTS=.herokuapp.com`  
   
   
