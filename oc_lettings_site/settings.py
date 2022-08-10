@@ -151,7 +151,7 @@ LOGGING = {
 
 # django heroku settings
 django_heroku.settings(locals())
-CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com', 'http://*.herokuapp.com']
 
 # Sentry monitoring
 
