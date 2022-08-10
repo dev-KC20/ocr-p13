@@ -75,8 +75,8 @@ jobs:
             heroku config:set ADMIN_USERNAME=$ADMIN_USERNAME -a $HEROKU_APP_NAME
             heroku config:set ADMIN_PASSWORD=$ADMIN_PASSWORD -a $HEROKU_APP_NAME
             heroku config:set ADMIN_EMAIL=$ADMIN_EMAIL -a $HEROKU_APP_NAME
-            heroku container:run python manage.py makemigrations -a $HEROKU_APP_NAME
-            heroku container:run python manage.py migrate -a $HEROKU_APP_NAME
+            heroku run python manage.py makemigrations -a $HEROKU_APP_NAME
+            heroku run python manage.py migrate -a $HEROKU_APP_NAME
             heroku container:push -a $HEROKU_APP_NAME web
             heroku container:release -a $HEROKU_APP_NAME web
       # - run:
