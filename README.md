@@ -1,6 +1,6 @@
 ![forthebadge](https://forthebadge.com/images/badges/cc-0.svg)
 ![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)  
-
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/dev-KC20/ocr-p13/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/dev-KC20/ocr-p13/tree/main)
 
 
 # ocr-p13 Développez une architecture back-end sécurisée en utilisant Django ORM
