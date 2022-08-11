@@ -4,7 +4,7 @@ FROM python:3
 # set environment variables no buffering stdout/stderr
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PORT 8080
+ENV PORT 8000
 
 # set work directory within the container
 WORKDIR /oc_lettings
