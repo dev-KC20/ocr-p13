@@ -95,8 +95,8 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 (l): local  
 (c): circleci  
 (h): heroku   
- X: same value everywhere  
- O: depending on context  
+ X: same value where crossed 
+ O: value depends on context  
 and used to store images on the dockerhub: IMAGE_REPO=oclettings-image-repo
 and to create the initial superuser on heroku ADMIN_*
 ``` 
@@ -220,22 +220,22 @@ Before the next commit, you should update the config.yml file by commenting out 
  
 ## Security and privacy  
     
-    Orange County Lettings and its co-workers do take your privacy and your data safety very seriously. 
-    Our IT team has set several security measures to ensure nothing bad may happen to your data.  
-  
-    All technical operations are logged and help us to prevent and identify any mis-behavior or attacks
+Orange County Lettings and its co-workers do take your privacy and your data safety very seriously. 
+Our IT team has set several security measures to ensure nothing bad may happen to your data.  
 
-    Finally the code itself is secured by reducing the exposure of secrets to public repositories,   
+All technical operations are logged and help us to prevent and identify any mis-behavior or attacks
+
+Finally the code itself is secured by reducing the exposure of secrets to public repositories,   
 
 
 ### Secret's management
 
-    Django uses "secret" to generate its certificates and advises to keep the secret key, secret.
-    OC Lettings uses the python-decouple module to replace the secret key's values of the settings.py file by their decouple link :
-    Storing actual secret in a .env file make its possible to keep them local provided one does exclude the .env file from the commits by regitering it in .gitignore.  
-  
-    When being remote, it is important that one creates environment variables of the same key and values as the ones stored locally in the .env file. 
-    When remote, some key's value require a small change like the following one :  
+Django uses "secret" to generate its certificates and advises to keep the secret key, secret.
+OC Lettings uses the python-decouple module to replace the secret key's values of the settings.py file by their decouple link :
+Storing actual secret in a .env file make its possible to keep them local provided one does exclude the .env file from the commits by regitering it in .gitignore.  
+
+When being remote, it is important that one creates environment variables of the same key and values as the ones stored locally in the .env file. 
+When remote, some key's value require a small change like the following one :  
                                                                                              `ALLOWED_HOSTS=.herokuapp.com`  
   
   
@@ -257,17 +257,45 @@ Apart fixing issues and splitting apart the old project in two separate apps, th
   
 
 ## Credits and good reads.
-
-Openclassrooms and even more the DA Python discord gals & guys!
-
-Offical [Django](https://docs.djangoproject.com/fr/4.0/topics/security/#sql-injection-protection), [DRF](https://www.django-rest-framework.org/) et [pytest](https://docs.pytest.org/en/7.1.x/) documentation!  
-...
   
   
+A special great "thank you" to Rami, my patient mentor who always knew how to bring me back to track! One day we will find the time needed to study one of your 'magical' algorithm ;-) 
+
+To the Openclassrooms staff and even more the DA Python discord gals & guys!  
+He doesn't know (yet) but Thierry Chappuis with his series of video webinaire saved me nights, thx!  
+[Webinaires-pythonclassmates.org - YouTube](https://www.youtube.com/playlist?list=PLq7zFUM3vd6NNwb_5v0dj-Q2rt4-Ffr9F)
+
+  
+I would like also to credit the "Ile de France e-learning program" whose grant made it possible to attend this learning adventure.  
+  
+  
+---    
+  
+Offical [Options Meta des modèles | Documentation de Django | Django](https://docs.djangoproject.com/fr/4.1/ref/models/options/)  
+and mozilla [Django Tutorial Part 11: Deploying Django to production - Learn web development | MDN](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Deployment) documentations!  
+  
+The open source CLI project [How to use the CircleCI local CLI - CircleCI](https://circleci.com/docs/how-to-use-the-circleci-local-cli#validate-an-orb-in-your-configuration-file)   
+  
+  
+I wasn't able to follow them all but Amal_Shaji has written a comprehensice post on docker best practises for Python devs.  
+[Docker Best Practices for Python Developers | TestDriven.io](https://testdriven.io/blog/docker-best-practices/)  
+
+  
+Thx to Jermaine, Software Developer whose SO contribution made it to my tired brain on how I should trigger the heroku initial data migration and eventually get the Django admin site working!  
+[python - Django: Create a superuser in a data migration - Stack Overflow](https://stackoverflow.com/questions/72131424/django-create-a-superuser-in-a-data-migration)   
+
+  
+to DavitTovmasyan for his documented post on moving a model from one app to the other.  
+[How to safely move a model to another app in Django](https://davit.tech/django-move-model)  
+
+  
+  
+
 ## PEP 8 check
   
 `flake8`   
-  
+
+not much to show : the console remains empty, so good!  
   
 ```bash  
 (ENV) \dev\python\ocr\ocr-p13>flake8 
