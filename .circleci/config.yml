@@ -69,7 +69,7 @@ jobs:
             heroku container:login
             heroku apps:create $HEROKU_APP_NAME --region eu --addons=heroku-postgresql
             heroku config:set SECRET_KEY=$SECRET_KEY -a $HEROKU_APP_NAME
-            heroku config:set DEBUG=False -a $HEROKU_APP_NAME
+            heroku config:set ENVIRONMENT=production -a $HEROKU_APP_NAME
             heroku config:set ALLOWED_HOSTS=$ALLOWED_HOSTS -a $HEROKU_APP_NAME
             heroku config:set DISABLE_COLLECTSTATIC=$DISABLE_COLLECTSTATIC -a $HEROKU_APP_NAME
             heroku config:set SENTRY_DSN=$SENTRY_DSN -a $HEROKU_APP_NAME

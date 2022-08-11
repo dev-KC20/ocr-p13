@@ -148,7 +148,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # django_heroku.settings(locals(), staticfiles=False)
 if config("ENVIRONMENT", "development") == 'production':
     django_heroku.settings(locals())
-    CSRF_TRUSTED_ORIGINS = ['https://.herokuapp.com', 'http://.herokuapp.com']
+    CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com', 'http://*.herokuapp.com']
 
 LOGGING = {
     'version': 1,
