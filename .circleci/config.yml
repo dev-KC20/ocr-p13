@@ -40,12 +40,11 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.14
-          docker_layer_caching: true
       - run:
           name: build and deploy to dockerhub
           command: |
-            echo "$DOCKER_PASSWORD" | docker login --username=$DOCKER_USERNAME --password-stdin
             docker image build --file=Dockerfile --tag=$DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1 .
+            echo "$DOCKER_PASSWORD" | docker login --username=$DOCKER_USERNAME --password-stdin
             docker image push $DOCKER_USERNAME/$IMAGE_REPO:$CIRCLE_SHA1 
             docker image push $DOCKER_USERNAME/$IMAGE_REPO:latest 
 
