@@ -80,9 +80,8 @@ jobs:
             heroku config:set ADMIN_EMAIL=$ADMIN_EMAIL -a $HEROKU_APP_NAME
             heroku container:push -a $HEROKU_APP_NAME web
             heroku container:release -a $HEROKU_APP_NAME web
-
-      # heroku run python manage.py makemigrations -a $HEROKU_APP_NAME
-      # heroku run python manage.py migrate -a $HEROKU_APP_NAME
+            heroku run python manage.py migrate -a $HEROKU_APP_NAME
+            heroku run python manage.py loaddata oclet.json -a $HEROKU_APP_NAME
       # - run:
       #     name: initiate app db on heroku
       #     command: |
