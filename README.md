@@ -82,7 +82,6 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 |       | X | X | X | SECRET_KEY           | *yourverystrongandsecurekey*    |  
 |       | O | O | O | ENVIRONMENT          | production development          |  
 |       | O | O | O | ALLOWED_HOSTS        | localhost, 127.0.0.1,.heroku.com|  
-|       |   |   | O | CSRF_TRUSTED_ORIGINS |         .herokuapp.com          |  
 |       | X | X | X | DISABLE_COLLECTSTATIC|         1                       |  
 |       |   | X |   | HEROKU_API_KEY       | *yourherokuapikey*              |  
 |       |   | X |   | HEROKU_APP_NAME      | the-app-name-from-heroku        |  
@@ -93,7 +92,7 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 |       | X |   |   | ADMIN_PASSWORD       | the-app-superuser-password      |  
 |       | X |   |   | ADMIN_EMAIL          | the-app-superuser-email         |  
 
-(l): local including local container  
+(l): local  
 (c): circleci  
 (h): heroku   
  X: same value everywhere  
@@ -111,7 +110,7 @@ and to create the initial superuser on heroku ADMIN_*
     `Username: admin`  
     `Password: Abcd1234!`  
 
-3. Eventually run the server and follow instructions   
+3. Eventually run the server and follow instructions to open the site on your browser   
     `python manage.py runserver`     
 
 
@@ -170,34 +169,36 @@ Also shown on the picture, the monitoring is done thru the sentry.io solution.
 
 ### What do you need to run the CI/CD pipeline
   
-- GitHub account in order to clone and host your own code  
+- [GitHub account](https://github.com) in order to clone and host your own code  
     
 ![github repo](img/p13-github-repo-2022-08-09-191023.png)  
    
-- Circleci account in order to design and operate the CI/CD pipeline  
+- [Circleci](https://app.circleci.com/) free account in order to design and operate the CI/CD pipeline  
   
 ![circleci](img/p13-circleci-pipelines-2022-08-09-190809.png)  
    
-- Dockerhub account in order to push and pull the web app images from and to.  
+- [Dockerhub](https://hub.docker.com/) free account in order to push and pull the web app images from and to.  
 
 
-- Heroku account in order to run the web app image.  
+- [Heroku](https://www.heroku.com/) free account in order to run the web app image.  
   
 ![heroku deploy](img/p13-heroku-activity-2022-08-09-190350.png)  
   
-- Sentry account in order to hook it to your app logs and set email alerts in case of issues during the operations.  
+- [Sentry](https://sentry.io) free account in order to hook it to your app logs and set email alerts in case of issues during the operations.  
    
 ![sentry monitoring](img/p13-sentry-events-2022-08-09-190036.png)  
   
 You will have to collect on circleci, dockerhub, heroku and sentry the token keys described in the above section 6 table and register them back the project environment variables as per the table.  
   
 
-We also strongly recommend that you install the circleci CLI and the heroku CLI. It will ease working with the pipeline and the app.  
+We also recommend that you install the **circleci CLI** and the **heroku CLI**. It will ease working with the pipeline and the app from your developper terminal.    
+
 For instance before sending a new commit to the pipeline, the CLI is handy to check the syntax of your configuration file with :  
 
 `circleci config validate .circleci/config.yml`  
   
-  
+
+
 ### How it works  
   
 From that step on, every time a commit is made in the github code repo, the circleci pipeline will run to check linting, test and if fine push the site image to the dockerhub.  
@@ -238,6 +239,14 @@ Before the next commit, you should update the config.yml file by commenting out 
                                                                                              `ALLOWED_HOSTS=.herokuapp.com`  
   
   
+
+
+
+## Refactor  
+
+Apart fixing issues and splitting apart the old project in two separate apps, the use of Django migrations in order to move the data was ...interesting. It code can be found at:  
+- lettings\migrations\0002_auto_20220806_1439.py  
+- profiles\migrations\0002_auto_20220807_1001.py
 
 
 
