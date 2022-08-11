@@ -80,7 +80,7 @@ In order to install and use locally the O.C. Lettings site, assuming you have Py
 | where |(l)|(c)|(h)|   what key           |        content                  |  
 |-------| --| --| --|----------------------|---------------------------------|  
 |       | X | X | X | SECRET_KEY           | *yourverystrongandsecurekey*    |  
-|       | O | O | O | DEBUG                | False                           |  
+|       | O | O | O | ENVIRONMENT          | production development          |  
 |       | O | O | O | ALLOWED_HOSTS        | localhost, 127.0.0.1,.heroku.com|  
 |       |   |   | O | CSRF_TRUSTED_ORIGINS |         .herokuapp.com          |  
 |       | X | X | X | DISABLE_COLLECTSTATIC|         1                       |  
