@@ -60,6 +60,8 @@ jobs:
       # heroku apps:create $HEROKU_APP_NAME --region eu --addons=heroku-postgresql
       # heroku config:set CSRF_TRUSTED_ORIGINS=$CSRF_TRUSTED_ORIGINS -a $HEROKU_APP_NAME
       # heroku apps:create $HEROKU_APP_NAME --region eu --addons=heroku-postgresql
+      # heroku heroku maintenance:on -a $HEROKU_APP_NAME
+      # heroku heroku maintenance:off -a $HEROKU_APP_NAME
       - run:
           name: deploy container to heroku
           command: |
